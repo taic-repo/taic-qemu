@@ -118,11 +118,11 @@ void free_lq(GlobalQueue* global_queue, uint64_t lq_idx) {
 
 void lq_enq(GlobalQueue* global_queue, uint64_t lq_idx, uint64_t data, bool need_preempt) {
     if(lq_idx >= LQ_NUM) {
-        error_report("The lq_idx is not valid");
+        // error_report("The lq_idx is not valid");
         return;
     }
     if(!global_queue->local_queue[lq_idx].is_used) {
-        error_report("The lq_idx is not used");
+        // error_report("The lq_idx is not used");
         return;
     }
     uint64_t state = 0;
@@ -139,11 +139,11 @@ void lq_enq(GlobalQueue* global_queue, uint64_t lq_idx, uint64_t data, bool need
 
 uint64_t lq_deq(GlobalQueue* global_queue, uint64_t lq_idx) {
     if(lq_idx >= LQ_NUM) {
-        error_report("The lq_idx is not valid");
+        // error_report("The lq_idx is not valid");
         return 0;
     }
     if(!global_queue->local_queue[lq_idx].is_used) {
-        error_report("The lq_idx is not used");
+        // error_report("The lq_idx is not used");
         return 0;
     }
     uint64_t state = 0;
