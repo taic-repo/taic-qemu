@@ -19,7 +19,7 @@
 #define PAGE_SIZE           0x1000
 #define GQ_NUM              4
 #define LQ_NUM              8
-#define INTR_NUM            6
+#define INTR_NUM            32
 
 typedef QSIMPLEQ_HEAD(, QueueEntry) QueueHead;
 
@@ -380,9 +380,10 @@ static inline void taic_send_softintr(TAICState* taic, uint64_t gq_idx, uint64_t
             check_sendcap(&(taic->gqs[gq_idx]), data);
             if(taic->gqs[gq_idx].sendcap_idx != -1) {   // 有发送能力，检查接收方的能力
                 uint64_t recv_os = taic->gqs[gq_idx].recv_os;
-                uint64_t recv_proc = taic->gqs[gq_idx].recv_proc;
+                uint64_t recv_proc = (taic->gqs[gq_idx].recv_proc >> 32) & 0x00000000ffffffff;
+                uint64_t irq_idx = taic->gqs[gq_idx].recv_proc & 0x00000000ffffffff;
                 uint64_t send_os = taic->gqs[gq_idx].os_id;
-                uint64_t send_proc = taic->gqs[gq_idx].proc_id;
+                uint64_t send_proc = (taic->gqs[gq_idx].proc_id << 32) | irq_idx;
                 // 找到对应的接收方的全局队列
                 int idx = -1;
                 for(int i = 0; i < GQ_NUM; i++) {
