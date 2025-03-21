@@ -41,6 +41,10 @@ uint64_t wakeup_ext(ExtIntrSlots* extintrslots, uint64_t irq) {
         state = qatomic_cmpxchg(&extintrslots->state, EINT_IDLE, WAKEUP_EXT);
         if(state == EINT_IDLE) {
             int64_t res = extintrslots->slots[irq];
+            if((res & 0x02) != 0) {
+                qatomic_set(&extintrslots->state, EINT_IDLE);
+                return res;
+            }
             extintrslots->slots[irq] = 0;
             qatomic_set(&extintrslots->state, EINT_IDLE);
             return res;

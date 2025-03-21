@@ -145,6 +145,10 @@ uint64_t wakeup_soft(SoftIntrSlots* softintrslots, uint64_t send_os_id, uint64_t
             for(i = 0; i < softintrslots->cap; i++) {
                 if(softintrslots->recvcap[i].send_os_id == send_os_id && softintrslots->recvcap[i].send_proc_id == send_proc_id) {
                     uint64_t res = softintrslots->recvcap[i].handler;
+                    if((res & 0x02) != 0) {
+                        qatomic_set(&softintrslots->state, SINT_IDLE);
+                        return res;
+                    }
                     softintrslots->recvcap[i].send_os_id = 0;
                     softintrslots->recvcap[i].send_proc_id = 0;
                     softintrslots->recvcap[i].handler = 0;
